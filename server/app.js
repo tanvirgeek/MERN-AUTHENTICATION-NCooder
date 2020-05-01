@@ -4,14 +4,25 @@ const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
 app.use(cookieParser());
 app.use(express.json());
+require('dotenv').config();
+const helmet = require('helmet');
+app.use(helmet());
 
-mongoose.connect('mongodb://localhost:27017/mernauth',{useNewUrlParser:true, useUnifiedTopology:true});
+//connet to database
+mongoose.connect(process.env.MONGO_URL,{useNewUrlParser:true, useUnifiedTopology:true});
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {
   console.log("we are connected to database");
 });
 
-app.listen(5000, ()=>{
-    console.log("Listening on port 5000")
+const userRouter = require('./routes/User');
+app.use('/user', userRouter);
+
+//Homepage
+
+
+//server
+app.listen(process.env.PORT, ()=>{
+    console.log(`Listening on port ${process.env.PORT}`)
 });
